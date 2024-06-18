@@ -1,15 +1,24 @@
 var express = require('express');
 var router = express.Router();
 
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   //res.send('respond with a resource');
   async function getVotes(chamber) {
-	const resp = await fetch("https://api.congress.gov/v3/bill/117?fromDateTime=2022-08-04T04:02:00Z&toDateTime=2022-09-30T04:03:00Z&sort=updateDate+desc&api_key=lf2rUP1OzbBazrHXK4P1uP0xDsYPekSy4qaikQjV");
+	const resp = await fetch("https://api.congress.gov/v3/bill/117?sort=updateDate+desc&api_key="+process.env.api_key);
 	
 	const voteList = await resp.json();
-	console.log(voteList);
-  }
+	const data = voteList;
+	data.bills.forEach(bill => {
+		console.log(bill.congress + "th Congress");
+		console.log("Title: "+bill.title);
+		console.log("\n" + bill.text)
+		console.log("From: " + bill.originChamber)
+		console.log("Last Updated: "+bill.updateDate);
+		console.log("\n");
+	});
+  };
   getVotes();
   }
 );
