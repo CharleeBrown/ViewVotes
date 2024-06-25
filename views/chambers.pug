@@ -1,0 +1,11 @@
+doctype html
+html(lang="en")
+  head
+    link(rel='stylesheet' href='/stylesheets/style.css')
+    title= title
+  body
+    h1= title
+    ul
+      each bill in bills
+        h3= bill.title
+        p="Recent Action: "+bill.latestAction.text

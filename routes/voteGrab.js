@@ -2,25 +2,22 @@ var express = require('express');
 var router = express.Router();
 
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  //res.send('respond with a resource');
-  async function getVotes(chamber) {
-	const resp = await fetch("https://api.congress.gov/v3/bill/117?sort=updateDate+desc&api_key="+process.env.api_key);
-	
-	const voteList = await resp.json();
-	const data = voteList;
-	data.bills.forEach(bill => {
-		console.log(bill.congress + "th Congress");
-		console.log("Title: "+bill.title);
-		console.log("\n" + bill.text)
-		console.log("From: " + bill.originChamber)
-		console.log("Last Updated: "+bill.updateDate);
-		console.log("\n");
-	});
-  };
-  getVotes();
-  }
-);
+
+router.get('/', async function(req, res, next) {
+	try {
+	  // Fetch data from API
+	  const response = await fetch("https://api.congress.gov/v3/bill/117/hr?sort=updateDate+desc&api_key=" + process.env.api_key);
+	  if (!response.ok) {
+		throw new Error('Failed to fetch data');
+	  }
+	  const data = await response.json();
+	  console.log(data.bills);
+	  	
+	  // Render Pug template and pass data
+	  res.render('chambers', { title: 'Chambers', bills: data.bills }); // Assuming 'data.bills' is the array of bills from API response
+	} catch (error) {
+	  next(error); // Pass error to the error handler middleware
+	}
+  });
 
 module.exports = router;
